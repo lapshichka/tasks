@@ -198,7 +198,7 @@ console.log(quickSort(array));*/
 // ! Обход в ширину (BFS) ------------------------
 // ! -------------------- Breadth-First Search ---
 // !----------------------------------------------
-const graph = {
+/*const graph = {
   a: ['b', 'c'],
   b: ['e'],
   c: ['b', 'd'],
@@ -220,4 +220,4 @@ function breadthSearch (graph, start, end) {
     }
   }
 }
-console.log(breadthSearch(graph, 'a', 'e'));
+console.log(breadthSearch(graph, 'a', 'e'));*/

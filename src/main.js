@@ -2245,7 +2245,6 @@ console.log(cat.ageInfo);
 cat.ageInfo = 5;
 console.log(cat.ageInfo);*/
 
-
 /*class Component {
   constructor(selector) {
     this.$el = document.querySelector(selector);
@@ -2294,3 +2293,78 @@ const c = new Circle({
   size: 150,
   color: 'yellow',
 })*/
+
+// ** ------ Обработка ошибок, 'try...catch' ------
+/* ------------------------------------------------ */
+/*try {
+  console.log('Начало'); // выводится
+
+  lalalala; // ошибка
+
+  console.log('Конец'); // не выводится
+} catch (error) {
+  console.log('Возникла ошибка'); // выводится
+}*/
+
+/*try {
+	alalala; // ошибка, переменная не определена!
+} catch (err) {
+	console.log(err.name); // ReferenceError
+	console.log(err.message); // lalala is not defined
+	console.log(err.stack); // ReferenceError: lalala is not defined (...стек вызовов)
+	
+	// Можно вывести ошибку целиком, приводится к строке "name: message"
+	console.log(err);
+}*/
+
+/*try {
+  JSON.console.log("{ некорректный json o_O }");
+} catch(e) {
+  console.log(e.name); // SyntaxError
+  console.log(e.message); // Expected property name or '}' in JSON at position 2 (line 1 column 3)
+}*/
+
+// оператор throw
+/*let json = '{ "age": 30 }';
+
+try {
+	let user = JSON.parse(json);
+	
+	if(!user.name) {
+		throw new SyntaxError('Данные неполны: нет имени');
+	}
+	
+	console.log(user.name);
+} catch(err) {
+	console.log('JSON Error: ' + err.message); // JSON Error: Данные неполны: нет имени
+}*/
+
+/*let json = '{ "age": 30 }';
+
+try {
+	let user = JSON.parse(json);
+	
+	if(!user.name) {
+		throw new SyntaxError('Данные неполны: нет имени');
+	}
+	
+	blabla();
+	
+	console.log(user.name);
+} catch(err) {
+	if (err.name == 'SyntaxError') {
+		console.log('JSON error: ' + err.message);
+	} else {
+		throw err;
+	}
+}*/
+
+/*window.onerror = function(message, url, line, col, error) {
+	console.log(`${message} \n B ${line}:${col} на ${url}`);
+};
+
+function readData() {
+	badFunc();
+}
+
+readData();*/

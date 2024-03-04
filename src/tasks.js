@@ -1073,108 +1073,200 @@ console.log(ten.sub(5).result()); // 10 - 5 = 5
 console.log(ten.result()); // 10 */
 
 // ** Транслятор событий, создать класс для управления событиями
+/*// Не очень эффективное решение
 class EventEmitter {
-  constructor() {}
+  constructor() {
+    this.listeners = {};
+    this.temp = {};
+  }
 
   on(event, callback) {
     // добавить обработчик события
-    console.log(event);
-    console.log(callback);
+    if (this.listeners[event]) {
+      this.listeners[event].push(callback);
+    } else {
+      this.listeners[event] = [callback];
+    }
   }
 
   off(event, callback) {
     // удалить обработчик события
+    let deleteIndex = this.listeners[event].indexOf(callback);
+    this.listeners[event].splice(deleteIndex, 1);
   }
 
   once(event, callback) {
     // добавиь обработчик события, который сработает единожды
+    if (!this.temp[event]) {
+      this.temp[event] = [callback];
+    } else {
+      this.temp[event].push(callback);
+    }
   }
 
-  emit(event, [...arg]) {
+  emit(event, ...args) {
     // вызвать все обработчики события event, можно передать аргументы
+    let res, resOnce;
+
+    let fnOnce = this.temp[event];
+    let fn = this.listeners[event];
+
+    if (this.temp[event]) {
+      resOnce = fnOnce.map((item) => item(...args));
+    }
+    if (this.listeners[event]) {
+      res = fn.map((item) => item(...args));
+    }
+
+    delete this.temp[event];
+    return resOnce && res ? [...res, ...resOnce] : resOnce ? resOnce : res;
   }
 }
 
 class BroadcastEventEmitter extends EventEmitter {
+  emit(event, ...args) {
+    if (event == '*') {
+      let res = [],
+        resOnce = [];
+      for (const key in this.listeners) {
+        this.listeners[key].map((el) => res.push(el(...args)));
+      }
+      if (this.temp) {
+        for (const key in this.temp) {
+          this.temp[key].map((el) => resOnce.push(el(...args)));
+        }
+      }
 
+      let key = Object.keys(this.temp);
+      delete this.temp[key];
+      if (resOnce) {
+        return [...res, ...resOnce];
+      }
+
+      return res;
+    }
+  }
+}*/
+
+class EventEmitter {
+  constructor() {
+    this.stack = {};
+  }
+  on(eventName, callback) {
+    const event = this.stack[eventName] || [];
+    this.stack[eventName] = event;
+    event.push(callback);
+  }
+  off(eventName, callback) {
+    const event = this.stack[eventName];
+    if (!event) return;
+    let deleteIndex = event.indexOf(callback);
+    if (deleteIndex != -1) event.splice(deleteIndex, 1);
+  }
+  once(eventName, callback) {
+    const g = (...args) => {
+      this.off(eventName, g);
+      callback(...args);
+    };
+    this.on(eventName, g);
+  }
+  emit(eventName, ...args) {
+    const event = this.stack[eventName];
+    if (event) event.forEach((callback) => callback(...args));
+  }
 }
 
-let input = document.querySelector('input');
-let button = document.querySelector('button');
-let h1 = document.querySelector('h1');
+class BroadcastEventEmitter extends EventEmitter {
+  emit(eventName, ...args) {
+    if (eventName == '*') {
+      for (const key in this.stack) {
+        super.emit(key, ...args);
+      }
+    } else {
+      super.emit(eventName, ...args);
+    }
+  }
+}
 
-let emitter = new EventEmitter();
-
-emitter.on('event:name-changed', data => {
-  h1.innerHTML = `New value is: ${data.name}`;
-});
-/*
-подписываемся на событие 'event:name-changed' и передаём обработчик вторым аргументом. Теперь при возникновении этого события, мы будем вызывать обработчик и обновим текст заголовка при возникновении этого события.
-*/
-
-button.addEventListener('click', () => {
-  emitter.emit('event:name-changed', {name: input.value});
-});
-/*
-добавляем обработчик события 'клик' на кнопку. Этот обработчик производит событие 'event:name-changed' и вызывает все функции, подписанные на это события, передавая им строку из input.
-*/
+// let input = document.querySelector('input');
+// let button = document.querySelector('button');
+// let h1 = document.querySelector('h1');
 
 // let emitter = new EventEmitter();
 
-// const multiplyTwo = (num) => num * 2;
-// const multiplyThree = (num) => num * 3;
+// emitter.on('event:name-changed', data => {
+//   h1.innerHTML = `New value is: ${data.name}`;
+// });
+// /*
+// подписываемся на событие 'event:name-changed' и передаём обработчик вторым аргументом. Теперь при возникновении этого события, мы будем вызывать обработчик и обновим текст заголовка при возникновении этого события.
+// */
 
-// const divideTwo = (num) => num / 2;
-// const divideThree = (num) => num / 3;
+// button.addEventListener('click', () => {
+//   emitter.emit('event:name-changed', {name: input.value});
+// });
+// /*
+// добавляем обработчик события 'клик' на кнопку. Этот обработчик производит событие 'event:name-changed' и вызывает все функции, подписанные на это события, передавая им строку из input.
+// */
 
-// // Добавляем для события multiplication два обработчка
-// emitter.on('multiplication', multiplyTwo);
-// emitter.on('multiplication', multiplyThree);
+let emitter = new EventEmitter();
+// EventEmitter.prototype.emit = decorator(EventEmitter.prototype.emit);
 
-// // Вызываем событие multiplication, должны вызвать все обработчики для этого события - multiplyTwo и multiplyThree
-// emitter.emit('multiplication', 2);
-// // -> 4
-// // -> 6
+const multiplyTwo = (num) => num * 2;
+const multiplyThree = (num) => num * 3;
 
-// // Удалим обработчик multiplyThree для события multiplication
-// emitter.off('multiplication', multiplyThree);
+const divideTwo = (num) => num / 2;
+const divideThree = (num) => num / 3;
 
-// // Еще раз вызываем событие multiplication, теперь срабатывает только один обработчик multiplyTwo
-// emitter.emit('multiplication', 2);
-// // -> 4
+// Добавляем для события multiplication два обработчка
+emitter.on('multiplication', multiplyTwo);
+emitter.on('multiplication', multiplyThree);
 
-// // Создадим новое событие divideTwo и добавим два обработчика:
-// // divideTwo - срабатывает всегда, когда вызывается событие division (до тех пор, пока не удалим этот обработчик)
-// //  divideThree - сработает только ОДИН раз, во время первого ВЫЗОВА события division
-// emitter.on('division', divideTwo);
-// emitter.once('division', divideThree);
+// Вызываем событие multiplication, должны вызвать все обработчики для этого события - multiplyTwo и multiplyThree
+console.log(emitter.emit('multiplication', 2));
+// -> 4
+// -> 6
 
-// // Вызываем событие division - срабатывают обработчики divideTwo и divideThree
-// emitter.emit('division', 6);
-// // -> 3
-// // -> 2
+// Удалим обработчик multiplyThree для события multiplication
+emitter.off('multiplication', multiplyThree);
 
-// // Вызываем еще раз событие division - срабатывает ТОЛЬКО обработчики divideTwo
-// emitter.emit('division', 6);
-// // -> 3
+// Еще раз вызываем событие multiplication, теперь срабатывает только один обработчик multiplyTwo
+console.log(emitter.emit('multiplication', 2));
+// -> 4
 
-// // Вызываем еще раз событие division - срабатывает ТОЛЬКО обработчики divideTwo
-// emitter.emit('division', 6);
-// // -> 3
+// Создадим новое событие divideTwo и добавим два обработчика:
+// divideTwo - срабатывает всегда, когда вызывается событие division (до тех пор, пока не удалим этот обработчик)
+//  divideThree - сработает только ОДИН раз, во время первого ВЫЗОВА события division
+emitter.on('division', divideTwo);
+emitter.once('division', divideThree);
 
-// let broadcastEmitter = new BroadcastEventEmitter();
+// Вызываем событие division - срабатывают обработчики divideTwo и divideThree
+console.log('2 события (первый вызов)', emitter.emit('division', 6));
+// -> 3
+// -> 2
 
-// broadcastEmitter.on('multiplication', multiplyTwo);
-// broadcastEmitter.on('multiplication', multiplyThree);
-// broadcastEmitter.on('division', divideTwo);
-// broadcastEmitter.on('division', divideThree);
+// Вызываем еще раз событие division - срабатывает ТОЛЬКО обработчики divideTwo
+console.log('1 событие (второй вызов)', emitter.emit('division', 6));
+// -> 3
 
-// // Вызываем все события (multiplication и division) => все обработчики для всех событий будут вызваны.
-// // Для события multiplication - вызовутся обработчики multiplyTwo и multiplyThree.
-// // Для события division - вызовутся обработчики divideTwo и divideThree.
-// broadcastEmitter.emit('*', 6);
-// // -> 12
-// // -> 18
-// // -> 3
-// // -> 2
+// Вызываем еще раз событие division - срабатывает ТОЛЬКО обработчики divideTwo
+console.log('1 событие (третий вызов)', emitter.emit('division', 6));
+// -> 3
 
+let broadcastEmitter = new BroadcastEventEmitter();
+
+broadcastEmitter.on('multiplication', multiplyTwo);
+broadcastEmitter.on('multiplication', multiplyThree);
+broadcastEmitter.on('division', divideTwo);
+broadcastEmitter.on('division', divideThree);
+broadcastEmitter.once('division', divideThree);
+
+// Вызываем все события (multiplication и division) => все обработчики для всех событий будут вызваны.
+// Для события multiplication - вызовутся обработчики multiplyTwo и multiplyThree.
+// Для события division - вызовутся обработчики divideTwo и divideThree.
+console.log(broadcastEmitter.emit('*', 6));
+console.log(broadcastEmitter.emit('*', 6));
+
+// -> 12
+// -> 18
+// -> 3
+// -> 2
