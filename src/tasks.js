@@ -1148,7 +1148,7 @@ class BroadcastEventEmitter extends EventEmitter {
   }
 }*/
 
-class EventEmitter {
+/*class EventEmitter {
   constructor() {
     this.stack = {};
   }
@@ -1186,7 +1186,7 @@ class BroadcastEventEmitter extends EventEmitter {
       super.emit(eventName, ...args);
     }
   }
-}
+}*/
 
 // let input = document.querySelector('input');
 // let button = document.querySelector('button');
@@ -1208,7 +1208,7 @@ class BroadcastEventEmitter extends EventEmitter {
 // добавляем обработчик события 'клик' на кнопку. Этот обработчик производит событие 'event:name-changed' и вызывает все функции, подписанные на это события, передавая им строку из input.
 // */
 
-let emitter = new EventEmitter();
+/*let emitter = new EventEmitter();
 // EventEmitter.prototype.emit = decorator(EventEmitter.prototype.emit);
 
 const multiplyTwo = (num) => num * 2;
@@ -1269,4 +1269,72 @@ console.log(broadcastEmitter.emit('*', 6));
 // -> 12
 // -> 18
 // -> 3
-// -> 2
+// -> 2*/
+
+// ** Функция переводит двумерный массив в CSV формат и возвращает строку O формата (csvGenerator)
+const arraysToCsv = (data) => {
+  try {
+    let copyArr = [...data];
+
+    copyArr.forEach((externalEl) => {
+      externalEl.forEach((internalEl) => {
+        if (typeof internalEl === 'string' || typeof internalEl === 'number') {
+          if (typeof internalEl === 'string') {
+            if (
+              internalEl.includes(',') ||
+              internalEl.includes(';') ||
+              internalEl.includes('""')
+            ) {
+              copyArr[copyArr.indexOf(externalEl)][
+                externalEl.indexOf(internalEl)
+              ] = `"${internalEl}"`;
+            }
+          }
+        } else {
+          throw new Error('Unexpected value');
+        }
+      });
+    });
+
+    return `'${copyArr.join(' ')}'`;
+  } catch (error) {
+    return error;
+  }
+};
+
+console.log(
+  arraysToCsv([
+    [1, 2],
+    ['a', 'b'],
+  ])
+); // '1,2 a,b'
+console.log(
+  arraysToCsv([
+    [1, 2],
+    ['a,b', 'c,d'],
+  ])
+); // '1,2 "a,b","c,d"'
+console.log(
+  arraysToCsv([
+    [
+      function () {
+        console.log(12);
+      },
+      2,
+    ],
+    [true, false],
+  ])
+); // '1,2 "a,b","c,d"'
+console.log(
+  arraysToCsv([
+    [1, 2],
+    ['a,b', 'c,d'],
+  ])
+); // '1,2 "a,b","c,d"'
+console.log(
+  arraysToCsv([
+    1,2,
+    3,4,
+    'a', 'b'
+  ])
+); // '1,2 "a,b","c,d"'
