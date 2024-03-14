@@ -1291,14 +1291,17 @@ const arraysToCsv = (data) => {
             }
           }
         } else {
-          throw new Error('Unexpected value');
+          throw new SyntaxError('Unexpected value');
         }
       });
     });
 
-    return `'${copyArr.join(' ')}'`;
+    return `${copyArr.join('\n')}`;
   } catch (error) {
-    return error;
+    if (error.name === 'SyntaxError') {
+      throw `Error: ${error.message}`;
+    }
+    throw error; // проброс
   }
 };
 
@@ -1329,12 +1332,5 @@ console.log(
   arraysToCsv([
     [1, 2],
     ['a,b', 'c,d'],
-  ])
-); // '1,2 "a,b","c,d"'
-console.log(
-  arraysToCsv([
-    1,2,
-    3,4,
-    'a', 'b'
   ])
 ); // '1,2 "a,b","c,d"'
