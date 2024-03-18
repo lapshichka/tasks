@@ -1272,7 +1272,7 @@ console.log(broadcastEmitter.emit('*', 6));
 // -> 2*/
 
 // ** Функция переводит двумерный массив в CSV формат и возвращает строку O формата (csvGenerator)
-const arraysToCsv = (data) => {
+/*const arraysToCsv = (data) => {
   try {
     let copyArr = [...data];
 
@@ -1333,4 +1333,31 @@ console.log(
     [1, 2],
     ['a,b', 'c,d'],
   ])
-); // '1,2 "a,b","c,d"'
+); // '1,2 "a,b","c,d"'*/
+
+// ** Функция увеличивает значение счетчика на 1 и обновляет данные в localStorage
+localStorage.setItem('counters', JSON.stringify({ bannerClick: 5 }));
+
+const incrementCounter = (counterName) => {
+  let obj;
+  try {
+    obj = JSON.parse(localStorage.getItem('counters'));
+  } catch (error) {
+    obj = {};
+  }
+
+  if (obj[counterName]) {
+    obj[counterName] += 1;
+  } else {
+    obj[counterName] = 1;
+  }
+
+  localStorage.setItem('counters', JSON.stringify(obj));
+
+  return JSON.parse(localStorage.getItem('counters'))[counterName];
+};
+
+// в localStorage 1 счетчик: bannerClick = 5
+console.log(incrementCounter('bannerClick')); // 6
+console.log(incrementCounter('bannerClose')); // 1
+// в localStorage 2 счетчика: bannerClick = 6, bannerClose = 1

@@ -2368,3 +2368,60 @@ function readData() {
 }
 
 readData();*/
+
+// ** -------- localStorage, sessionStorage --------
+/* ------------------------------------------------ */
+// Демо localStorage
+/*localStorage.setItem('test', 1);
+console.log(localStorage.getItem('test')); // 1*/
+
+// Доступ как к обычному объекту
+/*// установить значение для ключа
+localStorage.test = 2;
+
+// получить значение по ключу
+console.log(localStorage.test); // 2
+
+// удалить ключ
+delete localStorage.test;*/
+
+/*// не рекомендуется использовать, так как
+let key = 'length';
+localStorage[key] = 5; // Ошибка, невозможно установить length*/
+
+// Перебор ключей
+/*localStorage.setItem('test', 1);
+localStorage.setItem('test2', 2);
+localStorage.setItem('test3', 3);
+for (let i = 0; i < localStorage.length; i++) {
+  let key = localStorage.key(i);
+  console.log(`${key}: ${localStorage.getItem(key)}`); // test2: 2 --> test: 1 --> test3: 3
+}*/
+
+/*for (let key in localStorage) {
+  if (!localStorage.hasOwnProperty(key)) {
+    continue; // пропустить встроенные ключи
+  }
+  console.log(`${key}: ${localStorage.getItem(key)}`); // test2: 2 --> test: 1 --> test3: 3
+}*/
+
+/*let keys = Object.keys(localStorage);
+for (const key of keys) {
+  console.log(`${key}: ${localStorage.getItem(key)}`); // test2: 2 --> test: 1 --> test3: 3
+}*/
+
+/*// Только строки!
+localStorage.user = {name: 'John'};
+console.log(localStorage.user); // [object Object]
+
+localStorage.user2 = JSON.stringify({name: 'John'});
+
+let user2 = JSON.parse(localStorage.user2);
+console.log(user2.name); // John
+
+console.log(JSON.stringify(localStorage, null, 2));*/
+
+// sessionStorage
+/*sessionStorage.setItem('test', 1);
+
+console.log(sessionStorage.getItem('test')); // после обновления: 1*/
