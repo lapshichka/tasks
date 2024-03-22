@@ -1336,7 +1336,7 @@ console.log(
 ); // '1,2 "a,b","c,d"'*/
 
 // ** Функция увеличивает значение счетчика на 1 и обновляет данные в localStorage
-localStorage.setItem('counters', JSON.stringify({ bannerClick: 5 }));
+/*localStorage.setItem('counters', JSON.stringify({ bannerClick: 5 }));
 
 const incrementCounter = (counterName) => {
   let obj;
@@ -1360,4 +1360,56 @@ const incrementCounter = (counterName) => {
 // в localStorage 1 счетчик: bannerClick = 5
 console.log(incrementCounter('bannerClick')); // 6
 console.log(incrementCounter('bannerClose')); // 1
-// в localStorage 2 счетчика: bannerClick = 6, bannerClose = 1
+// в localStorage 2 счетчика: bannerClick = 6, bannerClose = 1*/
+
+// ** Функция getRepeatableData должна вызывать getData и обрабатывать ошибки по условию
+class AttemptsLimitExceeded extends Error {
+  constructor() {
+    super('Max attempts limit exceed');
+    this.name = 'AttemptsLimitExceeded';
+  }
+}
+
+class NotFoundError extends Error {
+  constructor() {
+    super('Not found');
+    this.name = 'NotFoundError';
+  }
+}
+
+class TemporaryError extends Error {
+  constructor() {
+    super('TemporaryError');
+    this.name = 'TemporaryError';
+  }
+}
+
+function getRepeatableData(getData, key, maxRequestsNumber = Infinity) {
+  console.log('hello' + key);
+  try {
+    return getData(key);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      throw error;
+    } else if (error.name === 'TemporaryError') {
+      --maxRequestsNumber;
+      if (maxRequestsNumber === 0) {
+        throw new AttemptsLimitExceeded();
+      } else {
+        return getRepeatableData(getData, key, maxRequestsNumber);
+      }
+    }
+  }
+}
+
+const getData = (key) => {
+  if (key == 1) {
+    throw new NotFoundError();
+  }
+  if (key == 2) {
+    throw new TemporaryError();
+  }
+
+  return key;
+};
+console.log(getRepeatableData(getData, '2', 3));
