@@ -1363,7 +1363,7 @@ console.log(incrementCounter('bannerClose')); // 1
 // в localStorage 2 счетчика: bannerClick = 6, bannerClose = 1*/
 
 // ** Функция getRepeatableData должна вызывать getData и обрабатывать ошибки по условию
-class AttemptsLimitExceeded extends Error {
+/*class AttemptsLimitExceeded extends Error {
   constructor() {
     super('Max attempts limit exceed');
     this.name = 'AttemptsLimitExceeded';
@@ -1412,4 +1412,44 @@ const getData = (key) => {
 
   return key;
 };
-console.log(getRepeatableData(getData, '2', 3));
+console.log(getRepeatableData(getData, '2', 3));*/
+
+// ** Функция возвращает объект с полями succeeded и errors, корректно обрабатывает ошибки
+class ExecutionError extends Error {
+  constructor(element) {
+    super('ExecutionError');
+    this.name = 'ExecutionError';
+    this.element = element;
+  }
+  getArgData() {
+    return this.element;
+  }
+}
+
+function applyFn(dataArr, callback) {
+  let arr = [];
+
+  const obj = {
+    succeeded: [arr],
+    errors: [],
+  };
+
+  for (let i = 0; i < dataArr.length; i++) {
+    try {
+      arr.push(callback(dataArr[i]));
+    } catch (e) {
+      obj.errors.push(new ExecutionError(dataArr[i]));
+    }
+  }
+  return obj;
+}
+const { succeeded, errors } = applyFn([1, 2, 3], (arg) => arg + 1);
+console.log(succeeded); // succeeded: [2, 3, 4],
+console.log(errors); // errors: [],
+
+// const dataArr = ['{"login":"login","password":"password"}', '{{}'];
+// const callback = JSON.parse;
+// const { succeeded, errors } = applyFn(dataArr, callback);
+// console.log(succeeded); //   succeeded: [{ login: 'login', password: "password" }],
+// console.log(errors); //   errors: [ExecutionError],
+// console.log(errors[0].getArgData()); // '{}'
