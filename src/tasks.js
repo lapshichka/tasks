@@ -1416,9 +1416,10 @@ console.log(getRepeatableData(getData, '2', 3));*/
 
 // ** Функция возвращает объект с полями succeeded и errors, корректно обрабатывает ошибки
 class ExecutionError extends Error {
-  constructor(element) {
-    super('ExecutionError');
-    this.name = 'ExecutionError';
+  constructor(element, stack, message) {
+    super(message);
+    this.name = this.constructor.name;
+    this.stack = stack;
     this.element = element;
   }
   getArgData() {
@@ -1427,29 +1428,29 @@ class ExecutionError extends Error {
 }
 
 function applyFn(dataArr, callback) {
-  let arr = [];
-
-  const obj = {
-    succeeded: [arr],
-    errors: [],
-  };
-
-  for (let i = 0; i < dataArr.length; i++) {
-    try {
-      arr.push(callback(dataArr[i]));
-    } catch (e) {
-      obj.errors.push(new ExecutionError(dataArr[i]));
+  return dataArr.reduce(
+    (acc, el) => {
+      try {
+        acc.succeeded.push(callback(el));
+      } catch (e) {
+        acc.errors.push(new ExecutionError(el, e.stack));
+      }
+      return acc;
+    },
+    {
+      succeeded: [],
+      errors: [],
     }
-  }
-  return obj;
+  );
 }
-const { succeeded, errors } = applyFn([1, 2, 3], (arg) => arg + 1);
-console.log(succeeded); // succeeded: [2, 3, 4],
-console.log(errors); // errors: [],
+// const { succeeded, errors } = applyFn([1, 2, 3], (arg) => arg + 1);
+// console.log(succeeded); // succeeded: [2, 3, 4],
+// console.log(errors); // errors: [],
 
-// const dataArr = ['{"login":"login","password":"password"}', '{{}'];
-// const callback = JSON.parse;
-// const { succeeded, errors } = applyFn(dataArr, callback);
-// console.log(succeeded); //   succeeded: [{ login: 'login', password: "password" }],
-// console.log(errors); //   errors: [ExecutionError],
-// console.log(errors[0].getArgData()); // '{}'
+const dataArr = ['{"login":"login","password":"password"}', '{{}'];
+const callback = JSON.parse;
+const { succeeded, errors } = applyFn(dataArr, callback);
+console.log(succeeded); //   succeeded: [{ login: 'login', password: "password" }],
+console.log(errors); //   errors: [ExecutionError],
+console.log(errors[0].getArgData()); // '{}'
+console.log(errors[0].stack);
