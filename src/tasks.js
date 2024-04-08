@@ -1415,7 +1415,7 @@ const getData = (key) => {
 console.log(getRepeatableData(getData, '2', 3));*/
 
 // ** Функция возвращает объект с полями succeeded и errors, корректно обрабатывает ошибки
-class ExecutionError extends Error {
+/*class ExecutionError extends Error {
   constructor(element, stack, message) {
     super(message);
     this.name = this.constructor.name;
@@ -1453,4 +1453,25 @@ const { succeeded, errors } = applyFn(dataArr, callback);
 console.log(succeeded); //   succeeded: [{ login: 'login', password: "password" }],
 console.log(errors); //   errors: [ExecutionError],
 console.log(errors[0].getArgData()); // '{}'
-console.log(errors[0].stack);
+console.log(errors[0].stack);*/
+
+// ** Функция принимает имена двух файлов и вызывает функцию, переданную 3им параметром
+let fileSizes = {
+  testFile1: 65,
+  testFile2: 48,
+};
+const keys = Object.keys(fileSizes);
+
+function getFileSize(filename, cb) {
+  setTimeout(() => cb(fileSizes[filename]), Math.random() * 500);
+}
+
+function sumFileSizes(filename1, filename2, cb) {
+  getFileSize(filename1, (size1) => {
+    getFileSize(filename2, (size2) => {
+      const sum = size1 + size2;
+      cb(sum);
+    });
+  });
+}
+sumFileSizes(keys[0], keys[1], (el) => console.log(el + '!'));

@@ -2425,3 +2425,93 @@ console.log(JSON.stringify(localStorage, null, 2));*/
 /*sessionStorage.setItem('test', 1);
 
 console.log(sessionStorage.getItem('test')); // после обновления: 1*/
+
+// ** - Асинхронность. Что такое Event Loop, JS SetTimeout -
+/* ------------------------------------------------------ */
+/*console.log('Start');
+
+console.log('Start 2');
+
+function timeout5sec() {
+  console.log('timeout 5 sec');
+}
+
+window.setTimeout(function () {
+  console.log('Inside timeout, after 2 seconds');
+}, 2000);
+
+window.setTimeout(timeout5sec, 5000); //! не вызывать функцию, передавать как ссылку
+
+// setTimeout 0
+window.setTimeout(function () {
+  console.log('Inside timeout, after 2 seconds');
+}, 0);
+
+console.log('End');
+
+// Почему поток не блокируется? Почему программа регистрирует, а потом вызывает?
+// Концепт Event Loop - когда доходит до setTimeout(любые асинхронные операции), закидывает всю строчку в стек, в стеке смотрит браузерный API,
+// выкидывает его из стека и регистрирует функцию и ждет, пока браузерный сторонний API выполнит метод setTimeout,
+// когда данный метод будет выполнен, функция попадает в очередь, цикл пробегается по очереди, видит, что функция готова и кидает ее в стек, далее выполняет
+*/
+
+// ** - Событийный цикл (Event Loop): микро- макро- задачи -
+/* ------------------------------------------------------ */
+
+// движок «зависнет» на некоторое время от кода ниже
+/*let i = 0;
+
+let start = Date.now();
+
+function count() {
+
+  // делаем тяжёлую работу
+  for (let j = 0; j < 1e9; j++) {
+    i++;
+  }
+
+  alert("Done in " + (Date.now() - start) + 'ms');
+}
+
+count();*/
+
+/*let i = 0;
+
+let start = Date.now();
+
+function count() {
+
+  // делаем часть тяжёлой работы
+  do {
+    i++;
+  } while (i % 1e6 != 0);
+
+  if (i == 1e9) {
+    alert("Done in " + (Date.now() - start) + 'ms');
+  } else {
+    setTimeout(count); // планируем новый вызов
+  }
+
+}
+
+count();*/
+
+// ** ---------------- Callback ----------------
+/* --------------------------------------------- */
+// асинхронные колбэки
+// async function pageLoader(callback) {
+//   const data = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+//   callback(data);
+// }
+// function pageLoader(callback) {
+//   fetch('https://jsonplaceholder.typicode.com/todos/1')
+//     .then((response) => response.json())
+//     .then((json) => callback(json));
+// }
+// function getAJAX(data) {
+//   console.log('Послал запрос');
+//   console.log('Ответ сервера');
+//   console.log(data);
+// }
+
+// pageLoader(getAJAX);
