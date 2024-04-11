@@ -2515,3 +2515,137 @@ count();*/
 // }
 
 // pageLoader(getAJAX);
+
+// ** ---------------- Promise ----------------
+/* --------------------------------------------- */
+
+// callback hell (проблема вложенности)
+/*console.log('Request data...');
+
+setTimeout(() => {
+  console.log('Preparing data');
+
+  const backendData = {
+    server: 'aws',
+    port: 2000,
+    status: 'working',
+  };
+
+  setTimeout(() => {
+    backendData.modified = true;
+    console.log('Data received', backendData);
+  }, 2000);
+}, 2000);*/
+
+/*const prom = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    console.log('Preparing data');
+
+    const backendData = {
+      server: 'aws',
+      port: 2000,
+      status: 'working',
+    };
+
+    resolve(backendData);
+  }, 2000);
+});
+
+prom
+  .then((data) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        data.modified = true;
+        resolve(data);
+      }, 2000);
+    });
+    // prom2.then((clientData) => {
+    //   console.log('Data received', clientData);
+    // })
+  })
+  .then((clientData) => console.log('Data received', clientData))
+  .catch((err) => console.error('Error:', err))
+  .finally(() => console.log('Finally'))*/
+
+// const sleep = (ms) => new Promise((resolve) => setTimeout(() => resolve(), ms));
+// // sleep(2000).then(() => console.log('After 2 sec'));
+
+// Promise.all([sleep(2000), sleep(6000)]).then(() => console.log('All promises'));
+
+// Promise.race([sleep(2000), sleep(6000)]).then(() => console.log('Race promises'));
+
+/*let promise = new Promise((resolve, reject) => {
+  // setTimeout(() => resolve('done!'), 4000);
+  setTimeout(() => reject(new Error('Whoops!')), 3000);
+});
+
+promise.then(
+  (resolve) => console.log(resolve),
+  (error) => console.error(error)
+);*/
+
+/*let promise = new Promise((resolve, reject) => {
+    // setTimeout(() => resolve('done!'), 4000);
+    setTimeout(() => reject(new Error('Whoops!')), 3000);
+  });
+  
+  promise.catch(console.error);*/
+
+/*new Promise((resolve, reject) => {
+  setTimeout(() => resolve('value'), 4000);
+})
+  .finally(() => console.log('Промис завершен')) // сработает первым
+  .then((result) => console.log(result)); // value*/
+
+/*new Promise(function (resolve, reject) {
+  setTimeout(() => resolve(1), 1000);
+})
+  .then(function (result) {
+    console.log(result); // 1
+
+    return new Promise((resolve, reject) => {
+      // (*)
+      setTimeout(() => resolve(result * 2), 1000);
+    });
+  })
+  .then(function (result) {
+    // (**)
+
+    console.log(result); // 2
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => resolve(result * 2), 1000);
+    });
+  })
+  .then(function (result) {
+    console.log(result); // 4
+  });*/
+
+/*const loadJson = (url) => {
+  return fetch(url)
+    .then((response) => response.json());
+};
+
+const loadGithubUser = (name) => {
+  return fetch(`https://api.github.com/users/${name}`)
+    .then(response => response.json());
+};
+
+const showAvatar = (githubUser) => {
+  return new Promise((resolve, reject) => {
+    let img = document.createElement('img');
+    img.src = githubUser.avatar_url;
+    img.className = 'promise-avatar-example';
+    document.body.append(img);
+
+    setTimeout(() => {
+      img.remove();
+      resolve(githubUser);
+    }, 3000)
+  })
+}
+
+loadJson('/article/promise-chaining/user.json')
+  .then(user => loadGithubUser(user.name))
+  .then(showAvatar)
+  .then(githubUser => console.log(`Показ аватара ${githubUser.name} завершен`))*/

@@ -1456,7 +1456,7 @@ console.log(errors[0].getArgData()); // '{}'
 console.log(errors[0].stack);*/
 
 // ** Функция принимает имена двух файлов и вызывает функцию, переданную 3им параметром
-let fileSizes = {
+/*let fileSizes = {
   testFile1: 65,
   testFile2: 48,
 };
@@ -1474,4 +1474,136 @@ function sumFileSizes(filename1, filename2, cb) {
     });
   });
 }
-sumFileSizes(keys[0], keys[1], (el) => console.log(el + '!'));
+sumFileSizes(keys[0], keys[1], (el) => console.log(el + '!'));*/
+
+// ** Функция получает массив всех пользователей и передает его в функцию callback
+/*const usersDb = [
+  { id: 1, name: 'John', age: 25 },
+  { id: 2, name: 'Jane', age: 30 },
+  { id: 3, name: 'Alex', age: 35 },
+  { id: 4, name: 'Sarah', age: 28 },
+  { id: 5, name: 'Michael', age: 32 },
+];
+
+class Users {
+  constructor() {}
+
+  getUsersIds(cb) {
+    const ids = usersDb.map((el) => el.id).sort(() => Math.random() - 0.6);
+
+    setTimeout(() => {
+      cb(ids);
+    }, 200);
+  }
+
+  getUserInfo(id, cb) {
+    console.log(id);
+    const user = usersDb.filter((el) => {
+      if (el.id == id) return el;
+    });
+    // console.log('user', user);
+
+    setTimeout(() => {
+      cb(...user);
+    }, Math.random() * 200);
+  }
+}
+
+const getUsersInfo = (onLoad) => {
+  let user = new Users();
+
+  user.getUsersIds((ids) => {
+    let res = [];
+    let counter = 0;
+
+    ids.forEach((id, i) => {
+      user.getUserInfo(id, (userInfo) => {
+        res[i] = userInfo;
+        counter++;
+
+        if (counter === ids.length) onLoad(res);
+      });
+    });
+  });
+};
+
+getUsersInfo((users) => {
+  console.log(users);
+});*/
+
+// ** Функция увеличивает ЗП сотрудника с наименьшей ЗП (Promise)
+function increaseSalary() {
+  return api
+    .getEmployees()
+    .then((employees) => {
+      const salaries = employees.map(({ salary }) => salary);
+      const minSalary = Math.min(...salaries);
+
+      return employees.find(({ id, salary }) => {
+        if (salary === minSalary) {
+          return id;
+        }
+      });
+    })
+    .then(({ id, salary }) => api.setEmployeeSalary(id, salary + salary * 0.2))
+    .then(({ id, name, salary }) => {
+      api.notifyEmployee(
+        id,
+        ` Hello, ${name}! Congratulations, your new salary is ${salary}!`
+      );
+      return Promise.resolve(true);
+    })
+    .catch((err) => {
+      api.notifyAdmin(err);
+      return Promise.resolve(false);
+    });
+}
+
+const api = {
+  _employees: [
+    { id: 1, name: 'Alex', salary: 120000 },
+    { id: 2, name: 'Fred', salary: 110000 },
+    { id: 3, name: 'Bob', salary: 80000 },
+  ],
+
+  getEmployees() {
+    return new Promise((resolve) => {
+      resolve(this._employees.slice());
+    });
+  },
+
+  setEmployeeSalary(employeeId, newSalary) {
+    return new Promise((resolve) => {
+      this._employees = this._employees.map((employee) =>
+        employee.id !== employeeId
+          ? employee
+          : {
+              ...employee,
+              salary: newSalary,
+            }
+      );
+      resolve(this._employees.find(({ id }) => id === employeeId));
+    });
+  },
+
+  notifyEmployee(employeeId, text) {
+    return new Promise((resolve) => {
+      resolve(true);
+    });
+  },
+
+  notifyAdmin(error) {
+    return new Promise((resolve) => {
+      resolve(true);
+    });
+  },
+
+  setEmployees(newEmployees) {
+    return new Promise((resolve) => {
+      this._employees = newEmployees;
+      resolve();
+    });
+  },
+};
+
+console.log(increaseSalary());
