@@ -1532,7 +1532,7 @@ getUsersInfo((users) => {
 });*/
 
 // ** Функция увеличивает ЗП сотрудника с наименьшей ЗП (Promise)
-function increaseSalary() {
+/*function increaseSalary() {
   return api
     .getEmployees()
     .then((employees) => {
@@ -1606,4 +1606,62 @@ const api = {
   },
 };
 
-console.log(increaseSalary());
+console.log(increaseSalary());*/
+
+// ** Функция принимает массив промисов и возвращает результат того, который завершился первым
+/*const promiseRace = (arr) => {
+  return new Promise((resolve, reject) => {
+    arr.forEach((el) =>
+      el.catch((err) => reject(err)).then((res) => resolve(res))
+    );
+  });
+};
+
+const firstPromise = new Promise((resolve) =>
+  setTimeout(() => resolve(300), 300)
+);
+
+const secondPromise = new Promise((resolve) =>
+  setTimeout(() => resolve(200), 200)
+);
+
+const thirdPromise = new Promise((resolve) =>
+  setTimeout(() => resolve(100), 100)
+);
+
+promiseRace([firstPromise, secondPromise, thirdPromise]).then(console.log); // 100*/
+
+// ** Асинхронная функция, которая принимает массив промисов и возвращает массив результатов вызова этих промисов
+/*const promiseAll = (arr) => {
+  const newArr = [];
+  let counter = arr.length;
+
+  return new Promise((resolve, reject) => {
+    if (counter == 0) resolve([]);
+
+    arr.forEach((el, i) =>
+      el
+        .then((res) => {
+          newArr[i] = res;
+          counter--;
+
+          if (counter == 0) resolve(newArr);
+        })
+        .catch((err) => reject(err))
+    );
+  });
+};
+
+const firstPromise = new Promise((resolve) =>
+  setTimeout(() => resolve(300), 300)
+);
+
+const secondPromise = new Promise((resolve) =>
+  setTimeout(() => resolve(200), 200)
+);
+
+const thirdPromise = new Promise((resolve) =>
+  setTimeout(() => resolve(100), 100)
+);
+
+promiseAll([]).then(console.log); // [300, 200, 100]*/
