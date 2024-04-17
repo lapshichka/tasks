@@ -2649,3 +2649,39 @@ loadJson('/article/promise-chaining/user.json')
   .then(user => loadGithubUser(user.name))
   .then(showAvatar)
   .then(githubUser => console.log(`Показ аватара ${githubUser.name} завершен`))*/
+
+// ** --------------- Async/await ---------------
+/* ------------------------------------------------ */
+/*const delay = (ms) => {
+  return new Promise((r) => setTimeout(() => r(), ms));
+};
+
+const url = 'https://jsonplaceholder.typicode.com/todos';*/
+
+/*function fetchTodose() {
+  console.log('Fetch todo started');
+  return delay(2000)
+    .then(() => fetch(url))
+    .then((response) => response.json());
+}
+fetchTodose()
+  .then((data) => {
+    console.log('Data:', data);
+  })
+  .catch((err) => console.error(err));*/
+
+/*async function fetchAsyncTodos() {
+  console.log('Fetch todo started');
+
+  try {
+    await delay(2000);
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log('Data:', data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    console.log('finally');
+  }
+}
+fetchAsyncTodos();*/
