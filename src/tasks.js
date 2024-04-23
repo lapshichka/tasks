@@ -1780,7 +1780,7 @@ const api = {
 increaseSalary().then(console.log);*/
 
 // ** Функция принимает массив асинхронных функций и вызывает их
-async function promisesInSeries(arr) {
+/*async function promisesInSeries(arr) {
   let res;
 
   for (const el of arr) {
@@ -1800,4 +1800,35 @@ const thirdPromise = () =>
   new Promise((resolve) => setTimeout(() => resolve(100), 100));
 
 promisesInSeries([firstPromise, secondPromise, thirdPromise]).then(console.log);
-// Выполнит resolve(300) через 300 мс, потом resolve(200) через 200 мс, потом resolve(100) через 100 мс
+// Выполнит resolve(300) через 300 мс, потом resolve(200) через 200 мс, потом resolve(100) через 100 мс*/
+
+// ** Функция throttle должна вызывать функцию и запускать таймер, равный времени задержки
+const throttle = (cb, ms) => {
+  let timer;
+  let check = true;
+
+  return function (...args) {
+    if (check) {
+      cb.apply(this, args);
+      check = false;
+
+      timer = setTimeout(() => {
+        check = true;
+      }, ms);
+    }
+    return timer;
+  };
+};
+
+let counter = 0;
+const fn = () => {
+  counter++;
+};
+
+const throttledFn = throttle(fn, 500); // функция может быть вызвана не чаще, чем раз в 500 мс
+
+const intervalId = setInterval(throttledFn, 100);
+setTimeout(() => {
+  clearInterval(intervalId);
+  console.log('counter:', counter);
+}, 1000); // удаляем интервал через 10 вызовов
