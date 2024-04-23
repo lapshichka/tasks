@@ -1803,7 +1803,7 @@ promisesInSeries([firstPromise, secondPromise, thirdPromise]).then(console.log);
 // Выполнит resolve(300) через 300 мс, потом resolve(200) через 200 мс, потом resolve(100) через 100 мс*/
 
 // ** Функция throttle должна вызывать функцию и запускать таймер, равный времени задержки
-const throttle = (cb, ms) => {
+/*const throttle = (cb, ms) => {
   let timer;
   let check = true;
 
@@ -1831,4 +1831,32 @@ const intervalId = setInterval(throttledFn, 100);
 setTimeout(() => {
   clearInterval(intervalId);
   console.log('counter:', counter);
-}, 1000); // удаляем интервал через 10 вызовов
+}, 1000); // удаляем интервал через 10 вызовов*/
+
+// ** Функция должна запускать таймер, равный времени задержки, и игнорировать вызовы функции в течение времени задержки
+const debounce = (cb, ms) => {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => cb.apply(this, args), ms);
+    console.log(timer);
+  };
+};
+
+let counter = 0;
+const fn = () => {
+  counter++;
+};
+
+const debouncedFn = debounce(fn, 200);
+debouncedFn(); // первый вызов
+setTimeout(debouncedFn, 100); // вызов через 100 мс после последнего вызова
+// первый вызов был заблокирован, второй ожидает окончания таймера
+setTimeout(debouncedFn, 200); // вызов через 100 мс после последнего вызова
+// второй вызов был заблокирован, третий ожидает окончания таймера
+setTimeout(debouncedFn, 300); // ...
+setTimeout(debouncedFn, 400); // после этого вызова не следует других вызовов
+// только этот вызов сработает, т.к. после него прошло 200 мс и других вызовов не было
+setTimeout(() => {
+  console.log('counter', counter); // 1
+}, 2000);
